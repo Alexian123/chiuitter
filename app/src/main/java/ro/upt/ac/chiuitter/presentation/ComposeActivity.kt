@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ro.upt.ac.chiuitter.GetChiuitResultContract
 import ro.upt.ac.chiuitter.R
 
 // TODO 4: Make sure you have the Android component specified in Manifest.
@@ -71,7 +72,7 @@ class ComposeActivity : AppCompatActivity() {
     private fun onEditClick(text: String) {
         // Prepare the intent to be returned as result.
         val returnIntent = Intent().apply {
-            putExtra(EXTRA_TEXT, text)
+            putExtra(GetChiuitResultContract.EXTRA_TEXT, text)
         }
 
         // Mark the result as success and attach text data.
@@ -85,10 +86,6 @@ class ComposeActivity : AppCompatActivity() {
     @Composable
     private fun DefaultPreview() {
         ComposeScreen()
-    }
-
-    companion object {
-        const val EXTRA_TEXT = "extra_text"
     }
 
 }
