@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
@@ -33,6 +35,8 @@ import androidx.core.app.ShareCompat
 
 class HomeActivity : AppCompatActivity() {
 
+    private val chiuitListState = mutableStateOf(DummyChiuitStore.getAllData())
+
     /**
      * Take a moment to observe how an activity registers for an activity result using the
      * ActivityResultContract API.
@@ -41,11 +45,8 @@ class HomeActivity : AppCompatActivity() {
         setChiuitText(result)
     }
 
-    private val chiuitText = mutableStateOf("")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        chiuitText.value = getText(R.string.chiuit_example).toString()
         setContent { HomeScreen() }
     }
 
@@ -54,10 +55,13 @@ class HomeActivity : AppCompatActivity() {
         Surface(color = Color.White) {
             Box(modifier = Modifier.fillMaxSize()) {
                 // TODO 7: Use a vertical list that composes and displays only the visible items.
-
                 // TODO 8: Make use of Compose DSL to describe the content of the list and make sure
                 // to instantiate a [ChiuitListItem] for every item in [chiuitListState.value].
-
+                LazyColumn {
+                    itemsIndexed(chiuitListState.value) { _, chiuit ->
+                        ChiuitListItem(chiuit)
+                    }
+                }
 
                 AddFloatingButton(
                     modifier = Modifier
@@ -114,11 +118,6 @@ class HomeActivity : AppCompatActivity() {
      * and starts a new activity which supports sharing/sending text.
      */
     private fun shareChiuit(chiuitText: String) {
-        //val shareIntent = ShareCompat.IntentBuilder(this)
-        // TODO 1: Configure shareIntent to support text sending and set the text extra to chiuitText.
-
-        //shareIntent.startChooser()
-
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, chiuitText)
@@ -132,7 +131,6 @@ class HomeActivity : AppCompatActivity() {
      * Launches the composing activity using the previously defined activity launcher.
      */
     private fun composeChiuit() {
-        // TODO 3: Start the ComposeActivity using getChiuitLauncher.
         getChiuitLauncher.launch()
     }
 
@@ -140,9 +138,11 @@ class HomeActivity : AppCompatActivity() {
      * Checks and sets the new text value for the chiuit field.
      */
     private fun setChiuitText(resultText: String?) {
-        // TODO 6: Check if text is not null or empty, then set the new "chiuitText".
+        // TODO 9: Check if text is not null or empty, instantiate a new chiuit object
+        //  then add it to the [chiuitListState.value].
         if (!resultText.isNullOrEmpty()) {
-            chiuitText.value = resultText
+            val newChiuit = Chiuit(resultText)
+            chiuitListState.value += newChiuit
         }
     }
 
