@@ -1,7 +1,9 @@
 package ro.upt.ac.chiuitter
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -97,10 +99,18 @@ class HomeActivity : AppCompatActivity() {
      * and starts a new activity which supports sharing/sending text.
      */
     private fun shareChiuit(chiuitText: String) {
-        val shareIntent = ShareCompat.IntentBuilder(this)
+        //val shareIntent = ShareCompat.IntentBuilder(this)
         // TODO 1: Configure shareIntent to support text sending and set the text extra to chiuitText.
 
-        shareIntent.startChooser()
+        //shareIntent.startChooser()
+
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, chiuitText)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     /*
@@ -111,7 +121,7 @@ class HomeActivity : AppCompatActivity() {
      */
     private fun composeChiuit() {
         // TODO 3: Start the ComposeActivity using getChiuitLauncher.
-
+        getChiuitLauncher.launch()
     }
 
     /**
@@ -119,7 +129,9 @@ class HomeActivity : AppCompatActivity() {
      */
     private fun setChiuitText(resultText: String?) {
         // TODO 6: Check if text is not null or empty, then set the new "chiuitText".
-
+        if (!resultText.isNullOrEmpty()) {
+            chiuitText.value = resultText
+        }
     }
 
     @Preview(showBackground = true)
