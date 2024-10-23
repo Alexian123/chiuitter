@@ -9,15 +9,15 @@ class GetChiuitResultContract : ActivityResultContract<Unit, String?>() {
 
     override fun createIntent(context: Context, input: Unit): Intent {
         // TODO 2: Create an explicit intent which points to ComposeActivity.
-        return Intent()
+        return Intent(context, ComposeActivity::class.java)
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): String? {
         if (resultCode == Activity.RESULT_OK && intent != null) {
             // TODO 5: Extract the text from result intent.
-            return ""
+            return intent.getStringExtra(EXTRA_TEXT)
         }
-        return ""
+        return null
     }
 
     companion object {
