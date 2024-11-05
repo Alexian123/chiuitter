@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import ro.upt.ac.chiuitter.presentation.ComposeActivity
 
 class GetChiuitResultContract : ActivityResultContract<Unit, String?>() {
 

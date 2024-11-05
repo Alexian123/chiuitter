@@ -1,13 +1,17 @@
 package ro.upt.ac.chiuitter.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
@@ -29,7 +33,6 @@ import ro.upt.ac.chiuitter.R
 import ro.upt.ac.chiuitter.data.database.ChiuitDbStore
 import ro.upt.ac.chiuitter.data.database.RoomDatabase
 import ro.upt.ac.chiuitter.domain.Chiuit
-import androidx.core.app.ShareCompat
 import ro.upt.ac.chiuitter.GetChiuitResultContract
 
 class HomeActivity : AppCompatActivity() {
@@ -60,7 +63,11 @@ class HomeActivity : AppCompatActivity() {
 
                 // TODO 8: Make use of Compose DSL to describe the content of the list and make sure
                 // to instantiate a [ChiuitListItem] for every item in [chiuitListState.value].
-
+                LazyColumn {
+                    items(chiuitListState.value) { chiuit ->
+                        ChiuitListItem(chiuit)
+                    }
+                }
 
                 AddFloatingButton(
                     modifier = Modifier
@@ -118,10 +125,14 @@ class HomeActivity : AppCompatActivity() {
      * and starts a new activity which supports sharing/sending text.
      */
     private fun shareChiuit(chiuitText: String) {
-        val shareIntent = ShareCompat.IntentBuilder(this)
         // TODO 1: Configure shareIntent to support text sending and set the text extra to chiuitText.
-
-        shareIntent.startChooser()
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, chiuitText)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     /**
@@ -129,7 +140,7 @@ class HomeActivity : AppCompatActivity() {
      */
     private fun composeChiuit() {
         // TODO 3: Start the ComposeActivity using getChiuitLauncher.
-
+        getChiuitLauncher.launch()
     }
 
     /**
@@ -137,7 +148,9 @@ class HomeActivity : AppCompatActivity() {
      */
     private fun setChiuitText(resultText: String?) {
         // TODO 9': Check if text is not null or empty then delegate the addition to the [viewModel].
-
+        if (!resultText.isNullOrEmpty()) {
+            viewModel.addChiuit(resultText)
+        }
     }
 
     @Preview(showBackground = true)
