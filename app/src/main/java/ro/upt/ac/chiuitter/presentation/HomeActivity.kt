@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
@@ -88,7 +89,7 @@ class HomeActivity : AppCompatActivity() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     modifier = Modifier
-                        .weight(0.8f)
+                        .weight(0.6f)
                         .padding(8.dp),
                     text = chiuit.description,
                 )
@@ -103,6 +104,16 @@ class HomeActivity : AppCompatActivity() {
                     )
                 }
                 // TODO 12: Add a new button that has the purpose to delete a chiuit.
+                Button(
+                    modifier = Modifier
+                        .weight(0.2f)
+                        .padding(8.dp),
+                    onClick = { viewModel.removeChiuit(chiuit) }) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        stringResource(R.string.delete_action_icon_content_description)
+                    )
+                }
             }
         }
     }
