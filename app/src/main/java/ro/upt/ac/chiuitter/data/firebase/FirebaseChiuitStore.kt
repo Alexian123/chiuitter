@@ -13,7 +13,7 @@ import ro.upt.ac.chiuitter.domain.ChiuitRepository
 
 class FirebaseChiuitStore : ChiuitRepository {
 
-    private val database = FirebaseDatabase.getInstance().reference.child("chiuits")
+    private val database = FirebaseDatabase.getInstance("https://lab-sma-2024-default-rtdb.europe-west1.firebasedatabase.app").reference.child("chiuits")
 
     override fun getAll(): Flow<List<Chiuit>> = callbackFlow {
         val listener = object : ValueEventListener {
@@ -27,6 +27,11 @@ class FirebaseChiuitStore : ChiuitRepository {
                 val children = p0.children
                 // TODO 15: Iterate through the children, get the node value and
                 //  add it to nodeValues.
+                for (child in children) {
+                    child.getValue(ChiuitNode::class.java)?.let {
+                        nodeValues.add(it)
+                    }
+                }
 
                 val items = nodeValues.map { chiuitNode -> chiuitNode.toDomainModel() }
 
@@ -41,6 +46,7 @@ class FirebaseChiuitStore : ChiuitRepository {
 
     override fun addChiuit(chiuit: Chiuit) {
         // TODO 16: Insert the object into database - don't forget to use the right model.
+        database.push().setValue(chiuit.toFirebaseModel())
     }
 
     override fun removeChiuit(chiuit: Chiuit) {
@@ -56,7 +62,10 @@ class FirebaseChiuitStore : ChiuitRepository {
                 // TODO 17: Iterate through the children and find the matching node,
                 //  then perform the removal.
                 for (child in children) {
-
+                    if (child.getValue(ChiuitNode::class.java)?.timestamp == chiuit.timestamp) {
+                        child.ref.removeValue()
+                        break
+                    }
                 }
 
                 database.removeEventListener(this)
